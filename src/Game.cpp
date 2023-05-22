@@ -1,6 +1,7 @@
-#include "Game.h"
+#include "../include/Game.h"
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 Game::Game() : running{false}, window{nullptr}, renderer{nullptr} {};
 
@@ -54,11 +55,11 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-
 }
 
 void Game::render() {
     SDL_RenderClear(renderer);
+
 
     SDL_RenderPresent(renderer);
 }
