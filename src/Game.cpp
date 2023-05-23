@@ -1,8 +1,10 @@
-#include "../include/Game.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <chrono>
+
+#include "../include/Game.h"
+#include "../include/TextureManager.h"
 
 using namespace std::literals;
 auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
@@ -27,6 +29,12 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     }
     std::cout << "SDL Subsystems Initialized..." << std::endl;
 
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        std::cerr << "ERROR: Unable to initialize Image library: " << SDL_GetError() << std::endl;
+        return;
+    }
+    std::cout << "SDL Image library loaded!" << std::endl;
+
     int windowFlag {0};
     if (fullScreen)
         windowFlag = SDL_WINDOW_FULLSCREEN;
@@ -46,12 +54,6 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     std::cout << "Renderer created!" << std::endl;
 
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-        std::cerr << "ERROR: Unable to initialize Image library: " << SDL_GetError() << std::endl;
-        return;
-    }
-    std::cout << "SDL Image library loaded!" << std::endl;
-
     running = true;
     gameLoop();
 }
@@ -62,6 +64,8 @@ void Game::gameLoop() {
     duration accumulator = 0s;
 
     while(running) {
+        handleEvents();
+
         time_point newTime = Clock::now();
         auto frameTime = newTime - currentTime;
         if (frameTime > 250ms)
@@ -71,7 +75,6 @@ void Game::gameLoop() {
         accumulator += frameTime;
 
         while (accumulator >= dt) {
-            handleEvents();
             update();
             t += dt;
             accumulator -= dt;

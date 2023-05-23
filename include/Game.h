@@ -21,5 +21,4 @@ private:
     void render();
 };
 
-
 #endif //PONG_GAME_H
