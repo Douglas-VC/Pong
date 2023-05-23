@@ -6,13 +6,14 @@ class Game {
 private:
     bool running;
     SDL_Window *window;
-    SDL_Renderer *renderer;
 
 public:
     Game();
     ~Game();
 
     void init(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);
+
+    static SDL_Renderer *renderer;
 
 private:
     void gameLoop();
