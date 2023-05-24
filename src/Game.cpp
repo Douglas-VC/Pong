@@ -5,6 +5,8 @@
 
 #include "../include/Game.h"
 #include "../include/GameObject.h"
+#include "../include/ECS.h"
+#include "../include/Components.h"
 
 using namespace std::literals;
 auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};

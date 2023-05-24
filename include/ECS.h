@@ -130,18 +130,4 @@ public:
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif //PONG_ECS_H
