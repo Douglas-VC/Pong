@@ -4,9 +4,9 @@
 #include <chrono>
 
 #include "../include/Game.h"
-#include "../include/GameObject.h"
 #include "../include/ECS.h"
-#include "../include/Components.h"
+#include "../include/Components/PositionComponent.h"
+#include "../include/Components/SpriteComponent.h"
 
 using namespace std::literals;
 auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
@@ -15,6 +15,9 @@ using duration = decltype(Clock::duration{} + dt);
 using time_point = std::chrono::time_point<Clock, duration>;
 
 SDL_Renderer *Game::renderer = nullptr;
+
+Manager manager;
+auto &paddle(manager.addEntity());
 
 Game::Game() : running{false}, window{nullptr} {};
 
@@ -59,6 +62,10 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     std::cout << "Renderer created!" << std::endl;
 
     running = true;
+
+    paddle.addComponent<PositionComponent>(300, 300);
+    paddle.addComponent<SpriteComponent>("../assets/paddle.png");
+
     gameLoop();
 }
 
@@ -101,13 +108,14 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-
+    manager.refresh();
+    manager.update(1.0f);
 }
 
 void Game::render() {
     SDL_RenderClear(renderer);
 
-
+    manager.draw();
 
     SDL_RenderPresent(renderer);
 }
