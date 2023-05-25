@@ -5,7 +5,7 @@
 
 #include "../include/Game.h"
 #include "../include/ECS.h"
-#include "../include/Components/PositionComponent.h"
+#include "../include/Components/TransformComponent.h"
 #include "../include/Components/SpriteComponent.h"
 
 using namespace std::literals;
@@ -63,7 +63,7 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
 
     running = true;
 
-    paddle.addComponent<PositionComponent>(300, 300);
+    paddle.addComponent<TransformComponent>(50, 50);
     paddle.addComponent<SpriteComponent>("../assets/paddle.png");
 
     gameLoop();
@@ -110,6 +110,8 @@ void Game::handleEvents() {
 void Game::update() {
     manager.refresh();
     manager.update(1.0f);
+    paddle.getComponent<TransformComponent>().position += {10, 5};
+    paddle.getComponent<TransformComponent>().position = paddle.getComponent<TransformComponent>().position;
 }
 
 void Game::render() {
