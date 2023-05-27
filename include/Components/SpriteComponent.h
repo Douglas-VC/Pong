@@ -18,11 +18,16 @@ public:
     explicit SpriteComponent(const char *path) : transform{}, texture{}, srcRect{}, targetRect{} {
         setTex(path);
         SDL_QueryTexture(texture, nullptr, nullptr, &srcRect.w, &srcRect.h);
-        targetRect = srcRect;
     };
+
+    ~SpriteComponent() override {
+        SDL_DestroyTexture(texture);
+    }
 
     void init() override {
         transform = &entity->getComponent<TransformComponent>();
+        targetRect.h = srcRect.h * transform->scale;
+        targetRect.w = srcRect.w * transform->scale;
     }
 
     void setTex(const char *path) {

@@ -10,8 +10,13 @@ public:
     Vector2D velocity;
     float speed;
 
-    TransformComponent() : position{}, velocity{}, speed{} {};
-    TransformComponent(float x, float y) : position{x, y} {};
+    int height;
+    int width;
+    int scale;
+
+    TransformComponent() : position{}, velocity{}, speed{}, height{16}, width{16}, scale{1} {};
+    TransformComponent(float x, float y) : position{x, y}, velocity{}, speed{}, height{16}, width{16}, scale{1} {};
+    TransformComponent(float x, float y, int h, int w, int scale) : position{x, y}, velocity{}, speed{}, height{h}, width{w}, scale{scale} {};
 
     void update(float deltaTime) override {
         position += velocity * speed;
