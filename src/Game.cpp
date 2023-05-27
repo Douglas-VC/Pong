@@ -15,9 +15,12 @@ using duration = decltype(Clock::duration{} + dt);
 using time_point = std::chrono::time_point<Clock, duration>;
 
 SDL_Renderer *Game::renderer = nullptr;
+SDL_Event Game::event;
 
 Manager manager;
-auto &paddle(manager.addEntity());
+auto &paddle1(manager.addEntity());
+auto &paddle2(manager.addEntity());
+auto &ball(manager.addEntity());
 
 Game::Game() : running{false}, window{nullptr} {};
 
@@ -63,8 +66,16 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
 
     running = true;
 
-    paddle.addComponent<TransformComponent>(50, 50);
-    paddle.addComponent<SpriteComponent>("../assets/paddle.png");
+    paddle1.addComponent<TransformComponent>(50, height / 2 - 50);
+    paddle1.addComponent<SpriteComponent>("../assets/paddle.png");
+    paddle1.getComponent<TransformComponent>().speed = 5;
+
+    paddle2.addComponent<TransformComponent>(width - 50 - 16, height / 2 - 50);
+    paddle2.addComponent<SpriteComponent>("../assets/paddle.png");
+    paddle2.getComponent<TransformComponent>().speed = 5;
+
+    ball.addComponent<TransformComponent>(width / 2 - 8, height / 2 - 8);
+    ball.addComponent<SpriteComponent>("../assets/ball.png");
 
     gameLoop();
 }
@@ -95,11 +106,40 @@ void Game::gameLoop() {
 }
 
 void Game::handleEvents() {
-    SDL_Event event;
     SDL_PollEvent(&event);
     switch (event.type) {
         case SDL_QUIT:
             running = false;
+            break;
+
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym) {
+                case SDLK_w:
+                    paddle1.getComponent<TransformComponent>().velocity = {0.0, -1.0};
+                    break;
+                case SDLK_s:
+                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 1.0};
+                    break;
+                case SDLK_UP:
+                    paddle2.getComponent<TransformComponent>().velocity = {0.0, -1.0};
+                    break;
+                case SDLK_DOWN:
+                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 1.0};
+                    break;
+            }
+            break;
+
+        case SDL_KEYUP:
+            switch (event.key.keysym.sym) {
+                case SDLK_w:
+                case SDLK_s:
+                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 0.0};
+                    break;
+                case SDLK_UP:
+                case SDLK_DOWN:
+                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 0.0};
+                    break;
+            }
             break;
 
         default:
@@ -109,9 +149,7 @@ void Game::handleEvents() {
 
 void Game::update() {
     manager.refresh();
-    manager.update(1.0f);
-    paddle.getComponent<TransformComponent>().position += {10, 5};
-    paddle.getComponent<TransformComponent>().position = paddle.getComponent<TransformComponent>().position;
+    manager.update(10.0f);
 }
 
 void Game::render() {

@@ -14,6 +14,7 @@ public:
     void init(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);
 
     static SDL_Renderer *renderer;
+    static SDL_Event event;
 
 private:
     void gameLoop();

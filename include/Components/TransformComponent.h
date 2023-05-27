@@ -7,9 +7,15 @@
 class TransformComponent : public Component {
 public:
     Vector2D position;
+    Vector2D velocity;
+    float speed;
 
-    TransformComponent() : position{} {};
+    TransformComponent() : position{}, velocity{}, speed{} {};
     TransformComponent(float x, float y) : position{x, y} {};
+
+    void update(float deltaTime) override {
+        position += velocity * speed;
+    }
 };
 
 #endif //PONG_TRANSFORMCOMPONENT_H
