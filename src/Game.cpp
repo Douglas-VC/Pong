@@ -7,6 +7,7 @@
 #include "../include/ECS.h"
 #include "../include/Components/TransformComponent.h"
 #include "../include/Components/SpriteComponent.h"
+#include "../include/Components/ColliderComponent.h"
 
 using namespace std::literals;
 auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
@@ -68,14 +69,19 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
 
     paddle1.addComponent<TransformComponent>(50, height / 2 - 50);
     paddle1.addComponent<SpriteComponent>("../assets/paddle.png");
+    paddle1.addComponent<ColliderComponent>("paddle1");
     paddle1.getComponent<TransformComponent>().speed = 5;
 
     paddle2.addComponent<TransformComponent>(width - 50 - 16, height / 2 - 50);
     paddle2.addComponent<SpriteComponent>("../assets/paddle.png");
+    paddle2.addComponent<ColliderComponent>("paddle2");
     paddle2.getComponent<TransformComponent>().speed = 5;
 
     ball.addComponent<TransformComponent>(width / 2 - 8, height / 2 - 8);
     ball.addComponent<SpriteComponent>("../assets/ball.png");
+    ball.addComponent<ColliderComponent>("ball");
+    ball.getComponent<TransformComponent>().velocity = {-1.0, 0.0};
+    ball.getComponent<TransformComponent>().speed = 3;
 
     gameLoop();
 }
@@ -149,7 +155,14 @@ void Game::handleEvents() {
 
 void Game::update() {
     manager.refresh();
-    manager.update(10.0f);
+    manager.update(1.0f);
+
+    if (SDL_HasIntersection(&paddle1.getComponent<ColliderComponent>().collider,
+                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE ||
+        SDL_HasIntersection(&paddle2.getComponent<ColliderComponent>().collider,
+                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE) {
+        ball.getComponent<TransformComponent>().velocity *= -1.0;
+    }
 }
 
 void Game::render() {

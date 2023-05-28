@@ -28,6 +28,8 @@ public:
         transform = &entity->getComponent<TransformComponent>();
         targetRect.h = srcRect.h * transform->scale;
         targetRect.w = srcRect.w * transform->scale;
+        transform->height = srcRect.h * transform->scale;
+        transform->width = srcRect.w * transform->scale;
     }
 
     void setTex(const char *path) {

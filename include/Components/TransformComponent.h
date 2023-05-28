@@ -14,9 +14,9 @@ public:
     int width;
     int scale;
 
-    TransformComponent() : position{}, velocity{}, speed{}, height{16}, width{16}, scale{1} {};
-    TransformComponent(float x, float y) : position{x, y}, velocity{}, speed{}, height{16}, width{16}, scale{1} {};
-    TransformComponent(float x, float y, int h, int w, int scale) : position{x, y}, velocity{}, speed{}, height{h}, width{w}, scale{scale} {};
+    TransformComponent() : position{}, velocity{}, speed{}, height{}, width{}, scale{1} {};
+    TransformComponent(float x, float y) : position{x, y}, velocity{}, speed{}, height{}, width{}, scale{1} {};
+    TransformComponent(float x, float y, int scale) : position{x, y}, velocity{}, speed{}, height{}, width{}, scale{scale} {};
 
     void update(float deltaTime) override {
         position += velocity * speed;
