@@ -8,6 +8,7 @@
 #include "../include/Components/TransformComponent.h"
 #include "../include/Components/SpriteComponent.h"
 #include "../include/Components/ColliderComponent.h"
+#include "../include/Components/WindowBoundComponent.h"
 
 using namespace std::literals;
 auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
@@ -70,16 +71,19 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     paddle1.addComponent<TransformComponent>(50, height / 2 - 50);
     paddle1.addComponent<SpriteComponent>("../assets/paddle.png");
     paddle1.addComponent<ColliderComponent>("paddle1");
+    paddle1.addComponent<WindowBoundComponent>(height, width);
     paddle1.getComponent<TransformComponent>().speed = 5;
 
     paddle2.addComponent<TransformComponent>(width - 50 - 16, height / 2 - 50);
     paddle2.addComponent<SpriteComponent>("../assets/paddle.png");
     paddle2.addComponent<ColliderComponent>("paddle2");
+    paddle2.addComponent<WindowBoundComponent>(height, width);
     paddle2.getComponent<TransformComponent>().speed = 5;
 
     ball.addComponent<TransformComponent>(width / 2 - 8, height / 2 - 8);
     ball.addComponent<SpriteComponent>("../assets/ball.png");
     ball.addComponent<ColliderComponent>("ball");
+    ball.addComponent<WindowBoundComponent>(height, width);
     ball.getComponent<TransformComponent>().velocity = {-1.0, 0.0};
     ball.getComponent<TransformComponent>().speed = 3;
 
@@ -92,7 +96,7 @@ void Game::gameLoop() {
     duration accumulator = 0s;
 
     while(running) {
-        handleEvents();
+//        handleEvents();
 
         time_point newTime = Clock::now();
         auto frameTime = newTime - currentTime;
@@ -108,6 +112,7 @@ void Game::gameLoop() {
             accumulator -= dt;
         }
         render();
+        handleEvents();
     }
 }
 
@@ -161,6 +166,7 @@ void Game::update() {
                             &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE ||
         SDL_HasIntersection(&paddle2.getComponent<ColliderComponent>().collider,
                             &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE) {
+        
         ball.getComponent<TransformComponent>().velocity *= -1.0;
     }
 }

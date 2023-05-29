@@ -7,7 +7,6 @@
 
 #include "../ECS.h"
 #include "TransformComponent.h"
-#include "../TextureManager.h"
 
 class ColliderComponent : public Component {
 public:
