@@ -24,6 +24,9 @@ auto &paddle1(manager.addEntity());
 auto &paddle2(manager.addEntity());
 auto &ball(manager.addEntity());
 
+enum groupLabels : std::size_t {
+};
+
 Game::Game() : running{false}, window{nullptr} {};
 
 Game::~Game() {

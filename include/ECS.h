@@ -15,9 +15,10 @@ class Entity;
 class Manager;
 
 using ComponentID = std::size_t;
+using Group = std::size_t;
 
 inline ComponentID getUniqueComponentID() noexcept {
-    static ComponentID lastID {0};
+    static ComponentID lastID {0u};
     return lastID++;
 }
 
@@ -33,6 +34,9 @@ constexpr std::size_t maxComponents {32};
 using ComponentBitset = std::bitset<maxComponents>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
+constexpr std::size_t maxGroups {32};
+using GroupBitset = std::bitset<maxGroups>;
+
 class Component {
 public:
     Entity *entity;
@@ -47,13 +51,19 @@ public:
 
 class Entity {
 private:
-    bool active {true};
+    Manager& manager;
+
+    bool active;
     std::vector<std::unique_ptr<Component>> components;
 
-    ComponentArray componentArray;
+    ComponentArray componentArray{};
     ComponentBitset componentBitset;
 
+    GroupBitset groupBitset;
+
 public:
+    Entity(Manager& mManager) : manager(mManager), active{true} {}
+
     void update(float deltaTime) {
         for(auto &c : components)
             c->update(deltaTime);
@@ -75,6 +85,16 @@ public:
     template <typename T>
     [[nodiscard]] bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
+    }
+
+    [[nodiscard]] bool hasGroup(Group mGroup) const noexcept {
+        return groupBitset[mGroup];
+    }
+
+    void addGroup(Group mGroup) noexcept;
+
+    void delGroup(Group mGroup) noexcept {
+        groupBitset[mGroup] = false;
     }
 
     template <typename T, typename... TArgs>
@@ -105,29 +125,53 @@ public:
 class Manager {
 private:
     std::vector<std::unique_ptr<Entity>> entities;
+    std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 
 public:
     void update(float deltaTime) {
         for(auto &e : entities)
             e->update(deltaTime);
     }
+
     void draw() {
         for(auto &e : entities)
             e->draw();
     }
 
     void refresh() {
+        for(auto i(0u); i < maxGroups; ++i) {
+            auto& group(groupedEntities[i]);
+
+            group.erase(std::remove_if(std::begin(group), std::end(group),
+                            [i](Entity* mEntity){
+                                return !mEntity->isActive() || !mEntity->hasGroup(i);
+                            }), std::end(group));
+        }
+
         entities.erase(std::remove_if(std::begin(entities), std::end(entities),
                       [](const std::unique_ptr<Entity> &mEntity){ return !mEntity->isActive();}),
                        std::end(entities));
     }
 
+    void addToGroup(Entity* mEntity, Group mGroup) {
+        groupedEntities[mGroup].emplace_back(mEntity);
+    }
+
+    std::vector<Entity*>& getEntitiesByGroup(Group mGroup) {
+        return groupedEntities[mGroup];
+    }
+
     Entity &addEntity() {
-        Entity* e {new Entity{}};
+        Entity* e {new Entity{*this}};
         std::unique_ptr<Entity> uPtr{e};
         entities.emplace_back(std::move(uPtr));
         return *e;
     }
 };
+
+void Entity::addGroup(Group mGroup) noexcept {
+    groupBitset[mGroup] = true;
+    manager.addToGroup(this, mGroup);
+}
 
 #endif //PONG_ECS_H
