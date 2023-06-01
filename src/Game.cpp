@@ -4,7 +4,7 @@
 #include <chrono>
 
 #include "../include/Game.h"
-#include "../include/ECS.h"
+#include "../entt/entt.hpp"
 #include "../include/Components/TransformComponent.h"
 #include "../include/Components/SpriteComponent.h"
 #include "../include/Components/ColliderComponent.h"
@@ -16,9 +16,6 @@ using Clock = std::chrono::steady_clock;
 using duration = decltype(Clock::duration{} + dt);
 using time_point = std::chrono::time_point<Clock, duration>;
 
-SDL_Renderer *Game::renderer = nullptr;
-SDL_Event Game::event;
-
 Manager manager;
 auto &paddle1(manager.addEntity());
 auto &paddle2(manager.addEntity());
@@ -27,11 +24,9 @@ auto &ball(manager.addEntity());
 enum groupLabels : std::size_t {
 };
 
-Game::Game() : running{false}, window{nullptr} {};
+Game::Game() : running{false}, window{} {};
 
 Game::~Game() {
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
     IMG_Quit();
     SDL_Quit();
     std::cout << "Game cleaned!" << std::endl;
@@ -50,24 +45,7 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     }
     std::cout << "SDL Image library loaded!" << std::endl;
 
-    int windowFlag {0};
-    if (fullScreen)
-        windowFlag = SDL_WINDOW_FULLSCREEN;
-
-    window = SDL_CreateWindow(title, xPos, yPos, width, height, windowFlag);
-    if (!window) {
-        std::cerr << "ERROR: Unable to create window: " << SDL_GetError() << std::endl;
-        return;
-    }
-    std::cout << "Window created!" << std::endl;
-
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    if (!renderer) {
-        std::cerr << "ERROR: Unable to create renderer: " << SDL_GetError() << std::endl;
-        return;
-    }
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    std::cout << "Renderer created!" << std::endl;
+    window.create(title, xPos, yPos, width, height, fullScreen);
 
     running = true;
 
@@ -99,7 +77,7 @@ void Game::gameLoop() {
     duration accumulator = 0s;
 
     while(running) {
-//        handleEvents();
+        handleEvents();
 
         time_point newTime = Clock::now();
         auto frameTime = newTime - currentTime;
@@ -115,19 +93,18 @@ void Game::gameLoop() {
             accumulator -= dt;
         }
         render();
-        handleEvents();
     }
 }
 
 void Game::handleEvents() {
-    SDL_PollEvent(&event);
-    switch (event.type) {
+    SDL_PollEvent(&window.event);
+    switch (window.event.type) {
         case SDL_QUIT:
             running = false;
             break;
 
         case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
+            switch (window.event.key.keysym.sym) {
                 case SDLK_w:
                     paddle1.getComponent<TransformComponent>().velocity = {0.0, -1.0};
                     break;
@@ -144,7 +121,7 @@ void Game::handleEvents() {
             break;
 
         case SDL_KEYUP:
-            switch (event.key.keysym.sym) {
+            switch (window.event.key.keysym.sym) {
                 case SDLK_w:
                 case SDLK_s:
                     paddle1.getComponent<TransformComponent>().velocity = {0.0, 0.0};
@@ -175,9 +152,9 @@ void Game::update() {
 }
 
 void Game::render() {
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(window.getRenderer());
 
     manager.draw();
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(window.getRenderer());
 }
