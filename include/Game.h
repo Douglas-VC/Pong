@@ -4,17 +4,21 @@
 #include "../entt/entt.hpp"
 #include "Window.h"
 
+#include "systems/RenderSystem.h"
+
 class Game {
 private:
     bool running;
     Window window;
-    entt::registry m_registry;
+    entt::registry registry;
+
+    RenderSystem renderSystem;
 
 public:
-    Game();
+    Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);
     ~Game();
 
-    void init(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);
+    void init();
 
 private:
     void gameLoop();

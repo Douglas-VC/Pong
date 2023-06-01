@@ -1,19 +1,19 @@
 #include <iostream>
 #include "../include/Window.h"
 
-Window::Window() : window{nullptr}, renderer{nullptr} {};
+Window::Window() : window{nullptr}, renderer{nullptr}, event{}, height{}, width{} {};
 
 Window::~Window() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
 }
 
-void Window::create(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) {
+void Window::create(const char* title, int xPos, int yPos, int wWidth, int wHeight, bool fullScreen) {
     int windowFlag {0};
     if (fullScreen)
         windowFlag = SDL_WINDOW_FULLSCREEN;
 
-    window = SDL_CreateWindow(title, xPos, yPos, width, height, windowFlag);
+    window = SDL_CreateWindow(title, xPos, yPos, wWidth, wHeight, windowFlag);
     if (!window) {
         std::cerr << "ERROR: Unable to create window: " << SDL_GetError() << std::endl;
         return;
@@ -27,6 +27,9 @@ void Window::create(const char* title, int xPos, int yPos, int width, int height
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     std::cout << "Renderer created!" << std::endl;
+
+    height = wHeight;
+    width = wWidth;
 }
 
 SDL_Renderer* Window::getRenderer() const noexcept {

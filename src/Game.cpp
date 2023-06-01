@@ -5,34 +5,11 @@
 
 #include "../include/Game.h"
 #include "../entt/entt.hpp"
-#include "../include/Components/TransformComponent.h"
-#include "../include/Components/SpriteComponent.h"
-#include "../include/Components/ColliderComponent.h"
-#include "../include/Components/WindowBoundComponent.h"
+#include "../include/components/Transform.h"
+#include "../include/components/Sprite.h"
+#include "../include/components/Collider.h"
 
-using namespace std::literals;
-auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
-using Clock = std::chrono::steady_clock;
-using duration = decltype(Clock::duration{} + dt);
-using time_point = std::chrono::time_point<Clock, duration>;
-
-Manager manager;
-auto &paddle1(manager.addEntity());
-auto &paddle2(manager.addEntity());
-auto &ball(manager.addEntity());
-
-enum groupLabels : std::size_t {
-};
-
-Game::Game() : running{false}, window{} {};
-
-Game::~Game() {
-    IMG_Quit();
-    SDL_Quit();
-    std::cout << "Game cleaned!" << std::endl;
-}
-
-void Game::init(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) {
+Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) : running{}, window{} {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         std::cerr << "ERROR: Unable to initialize SDL: " << SDL_GetError() << std::endl;
         return;
@@ -46,30 +23,60 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
     std::cout << "SDL Image library loaded!" << std::endl;
 
     window.create(title, xPos, yPos, width, height, fullScreen);
+};
 
+Game::~Game() {
+    IMG_Quit();
+    SDL_Quit();
+    std::cout << "Game cleaned!" << std::endl;
+}
+
+void Game::init() {
     running = true;
 
-    paddle1.addComponent<TransformComponent>(50, height / 2 - 50);
-    paddle1.addComponent<SpriteComponent>("../assets/paddle.png");
-    paddle1.addComponent<ColliderComponent>("paddle1");
-    paddle1.addComponent<WindowBoundComponent>(height, width);
-    paddle1.getComponent<TransformComponent>().speed = 5;
+    auto playerPaddle = registry.create();
+    auto aiPaddle = registry.create();
+    auto ball = registry.create();
 
-    paddle2.addComponent<TransformComponent>(width - 50 - 16, height / 2 - 50);
-    paddle2.addComponent<SpriteComponent>("../assets/paddle.png");
-    paddle2.addComponent<ColliderComponent>("paddle2");
-    paddle2.addComponent<WindowBoundComponent>(height, width);
-    paddle2.getComponent<TransformComponent>().speed = 5;
+    registry.emplace<Transform>(playerPaddle, window.width - 50 - 16, window.height / 2 - 50, 5.0);
+    registry.emplace<Sprite>(playerPaddle, window.getRenderer(), "../assets/paddle.png");
+    registry.emplace<Collider>(playerPaddle, "playerPaddle");
 
-    ball.addComponent<TransformComponent>(width / 2 - 8, height / 2 - 8);
-    ball.addComponent<SpriteComponent>("../assets/ball.png");
-    ball.addComponent<ColliderComponent>("ball");
-    ball.addComponent<WindowBoundComponent>(height, width);
-    ball.getComponent<TransformComponent>().velocity = {-1.0, 0.0};
-    ball.getComponent<TransformComponent>().speed = 3;
+    registry.emplace<Transform>(aiPaddle, 50, window.height / 2 - 50, 5.0);
+    registry.emplace<Sprite>(aiPaddle, window.getRenderer(), "../assets/paddle.png");
+    registry.emplace<Collider>(aiPaddle, "aiPaddle");
+
+    registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
+    registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
+    registry.emplace<Collider>(ball, "ball");
+
+//    paddle1.addComponent<TransformComponent>(50, window.height / 2 - 50);
+//    paddle1.addComponent<SpriteComponent>("../assets/paddle.png");
+//    paddle1.addComponent<ColliderComponent>("paddle1");
+//    paddle1.addComponent<WindowBoundComponent>(window.height, window.width);
+//    paddle1.getComponent<TransformComponent>().speed = 5;
+//
+//    paddle2.addComponent<TransformComponent>(window.width - 50 - 16, window.height / 2 - 50);
+//    paddle2.addComponent<SpriteComponent>("../assets/paddle.png");
+//    paddle2.addComponent<ColliderComponent>("paddle2");
+//    paddle2.addComponent<WindowBoundComponent>(window.height, window.width);
+//    paddle2.getComponent<TransformComponent>().speed = 5;
+//
+//    ball.addComponent<TransformComponent>(window.width / 2 - 8, window.height / 2 - 8);
+//    ball.addComponent<SpriteComponent>("../assets/ball.png");
+//    ball.addComponent<ColliderComponent>("ball");
+//    ball.addComponent<WindowBoundComponent>(window.height, window.width);
+//    ball.getComponent<TransformComponent>().velocity = {-1.0, 0.0};
+//    ball.getComponent<TransformComponent>().speed = 3;
 
     gameLoop();
 }
+
+using namespace std::literals;
+auto constexpr dt = std::chrono::duration<long long, std::ratio<1, 60>>{1};
+using Clock = std::chrono::steady_clock;
+using duration = decltype(Clock::duration{} + dt);
+using time_point = std::chrono::time_point<Clock, duration>;
 
 void Game::gameLoop() {
     time_point t {};
@@ -104,33 +111,33 @@ void Game::handleEvents() {
             break;
 
         case SDL_KEYDOWN:
-            switch (window.event.key.keysym.sym) {
-                case SDLK_w:
-                    paddle1.getComponent<TransformComponent>().velocity = {0.0, -1.0};
-                    break;
-                case SDLK_s:
-                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 1.0};
-                    break;
-                case SDLK_UP:
-                    paddle2.getComponent<TransformComponent>().velocity = {0.0, -1.0};
-                    break;
-                case SDLK_DOWN:
-                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 1.0};
-                    break;
-            }
+//            switch (window.event.key.keysym.sym) {
+//                case SDLK_w:
+//                    paddle1.getComponent<TransformComponent>().velocity = {0.0, -1.0};
+//                    break;
+//                case SDLK_s:
+//                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 1.0};
+//                    break;
+//                case SDLK_UP:
+//                    paddle2.getComponent<TransformComponent>().velocity = {0.0, -1.0};
+//                    break;
+//                case SDLK_DOWN:
+//                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 1.0};
+//                    break;
+//            }
             break;
 
         case SDL_KEYUP:
-            switch (window.event.key.keysym.sym) {
-                case SDLK_w:
-                case SDLK_s:
-                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 0.0};
-                    break;
-                case SDLK_UP:
-                case SDLK_DOWN:
-                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 0.0};
-                    break;
-            }
+//            switch (window.event.key.keysym.sym) {
+//                case SDLK_w:
+//                case SDLK_s:
+//                    paddle1.getComponent<TransformComponent>().velocity = {0.0, 0.0};
+//                    break;
+//                case SDLK_UP:
+//                case SDLK_DOWN:
+//                    paddle2.getComponent<TransformComponent>().velocity = {0.0, 0.0};
+//                    break;
+//            }
             break;
 
         default:
@@ -139,22 +146,21 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    manager.refresh();
-    manager.update(1.0f);
 
-    if (SDL_HasIntersection(&paddle1.getComponent<ColliderComponent>().collider,
-                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE ||
-        SDL_HasIntersection(&paddle2.getComponent<ColliderComponent>().collider,
-                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE) {
-        
-        ball.getComponent<TransformComponent>().velocity *= -1.0;
-    }
+
+//    if (SDL_HasIntersection(&paddle1.getComponent<ColliderComponent>().collider,
+//                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE ||
+//        SDL_HasIntersection(&paddle2.getComponent<ColliderComponent>().collider,
+//                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE) {
+//
+//        ball.getComponent<TransformComponent>().velocity *= -1.0;
+//    }
 }
 
 void Game::render() {
     SDL_RenderClear(window.getRenderer());
 
-    manager.draw();
+    renderSystem.render(window.getRenderer(), registry);
 
     SDL_RenderPresent(window.getRenderer());
 }

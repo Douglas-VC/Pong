@@ -9,6 +9,8 @@ private:
 
 public:
     SDL_Event event;
+    int height;
+    int width;
 
     Window();
     ~Window();

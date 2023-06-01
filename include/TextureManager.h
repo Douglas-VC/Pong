@@ -4,8 +4,8 @@
 
 class TextureManager {
 public:
-    static SDL_Texture *LoadTexture(const char *filename);
-    static void Draw(SDL_Texture *tex, SDL_Rect srcRect, SDL_Rect targetRect);
+    static SDL_Texture *LoadTexture(SDL_Renderer *renderer, const char *filename);
+    static void Draw(SDL_Renderer *renderer, SDL_Texture *tex, SDL_Rect srcRect, SDL_Rect targetRect);
 };
 
 #endif //PONG_TEXTUREMANAGER_H
