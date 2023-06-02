@@ -27,8 +27,14 @@ void ColliderSystem::update(CollisionHolder &collisionHolder) {
     auto &ai = collisionHolder.registry->get<Collider>(collisionHolder.ai);
     auto &ball = collisionHolder.registry->get<Collider>(collisionHolder.ball);
 
-    if (SDL_HasIntersection(&player.collider, &ball.collider) == SDL_TRUE ||
-        SDL_HasIntersection(&ai.collider, &ball.collider) == SDL_TRUE) {
+    if (SDL_HasIntersection(&player.collider, &ball.collider) == SDL_TRUE) {
+        float diff = ((ball.collider.y + ball.collider.h / 2.0f) - (player.collider.y + player.collider.h / 2.0f)) * ballVel.maxVel / (player.collider.h / 2.0);
+        ballVel.velY = diff;
+        ballVel.velX *= -1;
+        ballVel.immunityTicks = 5;
+    } else if (SDL_HasIntersection(&ai.collider, &ball.collider) == SDL_TRUE) {
+        float diff = ((ball.collider.y + ball.collider.h / 2.0) - (ai.collider.y + ai.collider.h / 2.0)) * ballVel.maxVel / (player.collider.h / 2.0);
+        ballVel.velY = diff;
         ballVel.velX *= -1;
         ballVel.immunityTicks = 5;
     }
