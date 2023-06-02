@@ -4,8 +4,9 @@
 struct Ball {
     float velX;
     float velY;
+    int immunityTicks;
 
-    Ball (float vx, float vy) : velX{vx}, velY{vy} {};
+    Ball(float vx, float vy) : velX{vx}, velY{vy}, immunityTicks{} {};
 };
 
 #endif //PONG_BALL_H

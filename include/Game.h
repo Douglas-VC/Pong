@@ -6,6 +6,7 @@
 
 #include "systems/RenderSystem.h"
 #include "systems/MovementSystem.h"
+#include "systems/ColliderSystem.h"
 
 class Game {
 private:
@@ -16,6 +17,9 @@ private:
 
     RenderSystem renderSystem;
     MovementSystem movementSystem;
+    ColliderSystem collisionSystem;
+
+    ColliderSystem::CollisionHolder collisionHolder;
 
 public:
     Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);

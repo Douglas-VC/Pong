@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include <iostream>
 #include "MovementSystem.h"
 #include "../components/Transform.h"
 #include "../components/Sprite.h"

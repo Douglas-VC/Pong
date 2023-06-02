@@ -57,6 +57,11 @@ void Game::init() {
     dispatcher.sink<KeyDown>().connect<&MovementSystem::onKeyDown>(movementSystem);
     dispatcher.sink<KeyUp>().connect<&MovementSystem::onKeyUp>(movementSystem);
 
+    collisionHolder.player = playerPaddle;
+    collisionHolder.ai = aiPaddle;
+    collisionHolder.ball = ball;
+    collisionHolder.registry = &registry;
+
     gameLoop();
 }
 
@@ -113,6 +118,7 @@ void Game::handleEvents() {
 
 void Game::update() {
     movementSystem.update(window, registry);
+    collisionSystem.update(collisionHolder);
 }
 
 void Game::render() {

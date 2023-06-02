@@ -2,9 +2,6 @@
 #include "../../entt/entt.hpp"
 #include "../components/Transform.h"
 #include "../components/Sprite.h"
-#include "../TextureManager.h"
-
-#include <iostream>
 
 void RenderSystem::render(SDL_Renderer *renderer, entt::registry& registry) {
     auto view = registry.view<Sprite, Transform>();
