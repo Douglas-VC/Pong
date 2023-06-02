@@ -9,6 +9,6 @@ find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
-add_executable(Pong src/main.cpp src/Game.cpp include/Game.h src/TextureManager.cpp include/TextureManager.h include/ECS.h include/components/TransformComponent.h include/components/SpriteComponent.h src/Vector2D.cpp include/Vector2D.h include/components/ColliderComponent.h include/components/WindowBoundComponent.h entt/entt.hpp src/Window.cpp include/Window.h include/components/Transform.h include/components/Sprite.h include/components/Collider.h include/systems/RenderSystem.cpp include/systems/RenderSystem.h include/events/KeyDown.h include/events/KeyUp.h include/systems/MovementSystem.cpp include/systems/MovementSystem.h include/components/Player.h)
+add_executable(Pong src/main.cpp src/Game.cpp include/Game.h src/TextureManager.cpp include/TextureManager.h src/Vector2D.cpp include/Vector2D.h entt/entt.hpp src/Window.cpp include/Window.h include/components/Transform.h include/components/Sprite.h include/components/Collider.h include/systems/RenderSystem.cpp include/systems/RenderSystem.h include/events/KeyDown.h include/events/KeyUp.h include/systems/MovementSystem.cpp include/systems/MovementSystem.h include/components/Player.h include/components/Ball.h)
 
 target_link_libraries(Pong ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})

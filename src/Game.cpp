@@ -9,6 +9,7 @@
 #include "../include/components/Sprite.h"
 #include "../include/components/Collider.h"
 #include "../include/components/Player.h"
+#include "../include/components/Ball.h"
 
 Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) : running{}, window{} {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -50,6 +51,7 @@ void Game::init() {
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
     registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
+    registry.emplace<Ball>(ball, 4.0, 0.0);
     registry.emplace<Collider>(ball, "ball");
 
     dispatcher.sink<KeyDown>().connect<&MovementSystem::onKeyDown>(movementSystem);
@@ -111,14 +113,6 @@ void Game::handleEvents() {
 
 void Game::update() {
     movementSystem.update(window, registry);
-
-//    if (SDL_HasIntersection(&paddle1.getComponent<ColliderComponent>().collider,
-//                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE ||
-//        SDL_HasIntersection(&paddle2.getComponent<ColliderComponent>().collider,
-//                            &ball.getComponent<ColliderComponent>().collider) == SDL_TRUE) {
-//
-//        ball.getComponent<TransformComponent>().velocity *= -1.0;
-//    }
 }
 
 void Game::render() {
