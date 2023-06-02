@@ -3,6 +3,7 @@
 #include "../components/Transform.h"
 #include "../components/Sprite.h"
 #include "../components/Ball.h"
+#include "../components/AI.h"
 #include "../Random.h"
 
 void MovementSystem::onKeyDown(const KeyDown& key_down) noexcept {

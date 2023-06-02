@@ -7,6 +7,7 @@
 #include "systems/RenderSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/ColliderSystem.h"
+#include "systems/AISystem.h"
 
 class Game {
 private:
@@ -18,6 +19,7 @@ private:
     RenderSystem renderSystem;
     MovementSystem movementSystem;
     ColliderSystem collisionSystem;
+    AISystem aiSystem;
 
     ColliderSystem::CollisionHolder collisionHolder;
 

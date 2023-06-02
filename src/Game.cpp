@@ -9,6 +9,7 @@
 #include "../include/components/Sprite.h"
 #include "../include/components/Collider.h"
 #include "../include/components/Player.h"
+#include "../include/components/AI.h"
 #include "../include/components/Ball.h"
 
 Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) : running{}, window{} {
@@ -47,6 +48,7 @@ void Game::init() {
 
     registry.emplace<Transform>(aiPaddle, 50, window.height / 2 - 50, 5.0);
     registry.emplace<Sprite>(aiPaddle, window.getRenderer(), "../assets/paddle.png");
+    registry.emplace<AI>(aiPaddle);
     registry.emplace<Collider>(aiPaddle, "aiPaddle");
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
@@ -119,6 +121,7 @@ void Game::handleEvents() {
 void Game::update() {
     movementSystem.update(window, registry);
     collisionSystem.update(collisionHolder);
+    aiSystem.update(window, registry);
 }
 
 void Game::render() {
