@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <utility>
 
-class Collider {
+struct Collider {
 public:
     SDL_Rect collider;
     std::string tag;
