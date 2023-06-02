@@ -3,6 +3,7 @@
 #include "../components/Transform.h"
 #include "../components/Sprite.h"
 #include "../components/Ball.h"
+#include "../Random.h"
 
 void MovementSystem::onKeyDown(const KeyDown& key_down) noexcept {
     switch (key_down.keyCode) {
@@ -28,6 +29,16 @@ void MovementSystem::onKeyUp(const KeyUp& key_up) noexcept {
     }
 }
 
+float randDir(const float vel) {
+    switch (randomInt(0, 1)) {
+        case 0:
+            return vel;
+
+        case 1:
+            return -vel;
+    }
+}
+
 void MovementSystem::update(Window &window, entt::registry& registry) {
     auto playerView = registry.view<Player, Transform, Sprite>();
     for(auto entity: playerView) {
@@ -38,9 +49,9 @@ void MovementSystem::update(Window &window, entt::registry& registry) {
         player.moveDirection = playerMovement;
 
         if (player.moveDirection == Player::MoveDirection::UP) {
-            transform.position.y -= 5.0;
+            transform.position.y -= 8.0;
         } else if (player.moveDirection == Player::MoveDirection::DOWN) {
-            transform.position.y += 5.0;
+            transform.position.y += 8.0;
         }
 
         if (transform.position.y < 0.0) {
@@ -62,6 +73,8 @@ void MovementSystem::update(Window &window, entt::registry& registry) {
         if (transform.position.x < 0.0 || transform.position.x > static_cast<float>(window.width - sprite.width)) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
+            ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
         }
 
         if (transform.position.y < 0.0) {

@@ -51,7 +51,7 @@ void Game::init() {
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
     registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
-    registry.emplace<Ball>(ball, 4.0, 0.0);
+    registry.emplace<Ball>(ball, 5.0, 0.0, 3.0, 6.0);
     registry.emplace<Collider>(ball, "ball");
 
     dispatcher.sink<KeyDown>().connect<&MovementSystem::onKeyDown>(movementSystem);

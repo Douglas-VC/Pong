@@ -7,6 +7,13 @@
 #include "../components/Ball.h"
 
 void ColliderSystem::update(CollisionHolder &collisionHolder) {
+    auto &ballVel = collisionHolder.registry->get<Ball>(collisionHolder.ball);
+
+    if (ballVel.immunityTicks > 0) {
+        ballVel.immunityTicks--;
+        return;
+    }
+
     auto view = collisionHolder.registry->view<Transform, Sprite, Collider>();
     for(auto entity: view) {
         auto &transform = view.get<Transform>(entity);
@@ -19,13 +26,6 @@ void ColliderSystem::update(CollisionHolder &collisionHolder) {
     auto &player = collisionHolder.registry->get<Collider>(collisionHolder.player);
     auto &ai = collisionHolder.registry->get<Collider>(collisionHolder.ai);
     auto &ball = collisionHolder.registry->get<Collider>(collisionHolder.ball);
-
-    auto ballVel = collisionHolder.registry->get<Ball>(collisionHolder.ball);
-
-    if (ballVel.immunityTicks > 0) {
-        ballVel.immunityTicks--;
-        return;
-    }
 
     if (SDL_HasIntersection(&player.collider, &ball.collider) == SDL_TRUE ||
         SDL_HasIntersection(&ai.collider, &ball.collider) == SDL_TRUE) {
