@@ -23,6 +23,9 @@ private:
 
     ColliderSystem::CollisionHolder collisionHolder;
 
+    SDL_Texture *backgroundText;
+    SDL_Rect backgroundRect;
+
 public:
     Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);
     ~Game();
