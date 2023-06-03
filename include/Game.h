@@ -23,7 +23,7 @@ private:
 
     ColliderSystem::CollisionHolder collisionHolder;
 
-    SDL_Texture *backgroundText;
+    SDL_Texture *backgroundTexture;
     SDL_Rect backgroundRect;
 
 public:

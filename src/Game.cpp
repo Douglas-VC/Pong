@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <chrono>
 
 #include "../include/Game.h"
@@ -24,6 +25,12 @@ Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fu
         return;
     }
     std::cout << "SDL Image library loaded!" << std::endl;
+
+    if (TTF_Init() == -1) {
+        std::cerr << "ERROR: Unable to initialize TTF library: " << SDL_GetError() << std::endl;
+        return;
+    }
+    std::cout << "SDL TTF library loaded!" << std::endl;
 
     window.create(title, xPos, yPos, width, height, fullScreen);
 };
@@ -53,7 +60,7 @@ void Game::init() {
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
     registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
-    registry.emplace<Ball>(ball, 12.0, 0.0, 5.0, 8.0);
+    registry.emplace<Ball>(ball, 12.0, 1.0, 5.0, 8.0);
     registry.emplace<Collider>(ball, "ball");
 
     dispatcher.sink<KeyDown>().connect<&MovementSystem::onKeyDown>(movementSystem);
@@ -64,7 +71,7 @@ void Game::init() {
     collisionHolder.ball = ball;
     collisionHolder.registry = &registry;
 
-    backgroundText = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
+    backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
     backgroundRect = {window.width / 2 - 8, 0, 16, 768};
 
     gameLoop();
@@ -129,7 +136,7 @@ void Game::update() {
 
 void Game::render() {
     SDL_RenderClear(window.getRenderer());
-    SDL_RenderCopy(window.getRenderer(), backgroundText, {}, &backgroundRect);
+    SDL_RenderCopy(window.getRenderer(), backgroundTexture, {}, &backgroundRect);
     renderSystem.render(window.getRenderer(), registry);
     SDL_RenderPresent(window.getRenderer());
 }
