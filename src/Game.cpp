@@ -36,8 +36,6 @@ Game::~Game() {
 }
 
 void Game::init() {
-    running = true;
-
     backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
     backgroundRect = {window.width / 2 - 8, 0, 16, 768};
 
@@ -73,6 +71,7 @@ void Game::init() {
     collisionHolder.ball = ball;
     collisionHolder.registry = &registry;
 
+    running = true;
     gameLoop();
 }
 

@@ -79,20 +79,20 @@ void MovementSystem::update(FontManager *fontManager,Window &window, entt::regis
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
             ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
-            for(auto scoreEntity: playerScoreView) {
-                auto &playerScore = playerScoreView.get<Score>(scoreEntity);
-                playerScore.score++;
-                playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
+            for(auto scoreEntity: aiScoreView) {
+                auto &aiScore = aiScoreView.get<Score>(scoreEntity);
+                aiScore.score++;
+                aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
             }
         } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
             ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
-            for(auto scoreEntity: aiScoreView) {
-                auto &aiScore = aiScoreView.get<Score>(scoreEntity);
-                aiScore.score++;
-                aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
+            for(auto scoreEntity: playerScoreView) {
+                auto &playerScore = playerScoreView.get<Score>(scoreEntity);
+                playerScore.score++;
+                playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
             }
         }
 
