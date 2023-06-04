@@ -1,11 +1,11 @@
 #include <SDL2/SDL.h>
-#include <iostream>
 #include "MovementSystem.h"
+#include "../Random.h"
 #include "../components/Transform.h"
 #include "../components/Sprite.h"
 #include "../components/Ball.h"
 #include "../components/AI.h"
-#include "../Random.h"
+#include "../components/Score.h"
 
 void MovementSystem::onKeyDown(const KeyDown& key_down) noexcept {
     switch (key_down.keyCode) {
@@ -41,7 +41,7 @@ float randDir(const float vel) {
     }
 }
 
-void MovementSystem::update(Window &window, entt::registry& registry) {
+void MovementSystem::update(FontManager *fontManager,Window &window, entt::registry& registry) {
     auto playerView = registry.view<Player, Transform, Sprite>();
     for(auto entity: playerView) {
         auto &player = playerView.get<Player>(entity);
@@ -64,6 +64,8 @@ void MovementSystem::update(Window &window, entt::registry& registry) {
     }
 
     auto ballView = registry.view<Ball, Transform, Sprite>();
+    auto playerScoreView = registry.view<Player, Score>();
+    auto aiScoreView = registry.view<AI, Score>();
     for(auto entity: ballView) {
         auto &ball = ballView.get<Ball>(entity);
         auto &transform = playerView.get<Transform>(entity);
@@ -72,11 +74,26 @@ void MovementSystem::update(Window &window, entt::registry& registry) {
         transform.position.x += ball.velX;
         transform.position.y += ball.velY;
 
-        if (transform.position.x < 0.0 || transform.position.x > static_cast<float>(window.width - sprite.width)) {
+        if (transform.position.x < 0.0) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
             ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
+            for(auto scoreEntity: playerScoreView) {
+                auto &playerScore = playerScoreView.get<Score>(scoreEntity);
+                playerScore.score++;
+                playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
+            }
+        } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
+            transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
+            transform.position.y = window.height / 2.0 - sprite.height / 2.0;
+            ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
+            for(auto scoreEntity: aiScoreView) {
+                auto &aiScore = aiScoreView.get<Score>(scoreEntity);
+                aiScore.score++;
+                aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
+            }
         }
 
         if (transform.position.y < 0.0) {

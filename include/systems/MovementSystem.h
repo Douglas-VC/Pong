@@ -6,6 +6,7 @@
 #include "../events/KeyDown.h"
 #include "../events/KeyUp.h"
 #include "../Window.h"
+#include "../FontManager.h"
 
 class MovementSystem {
 public:
@@ -16,7 +17,7 @@ public:
 
     void onKeyDown(const KeyDown& key_down) noexcept;
     void onKeyUp(const KeyUp& key_up) noexcept;
-    void update(Window &window, entt::registry& registry);
+    void update(FontManager *fontManager,Window &window, entt::registry& registry);
 };
 
 #endif //PONG_MOVEMENTSYSTEM_H

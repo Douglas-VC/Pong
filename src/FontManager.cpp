@@ -22,3 +22,26 @@ void FontManager::loadFont(const std::string& fontName, const std::string& fileP
         std::cerr << "Error loading font " << fontName << ": " << TTF_GetError() << std::endl;
     }
 }
+
+SDL_Texture* FontManager::getTextTexture(const std::string& fontName, const std::string& text, SDL_Color color) {
+    SDL_Texture* textTexture;
+    auto it = fonts.find(fontName);
+    if (it != fonts.end()) {
+        TTF_Font* font = it->second;
+        SDL_Surface* textSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+        if (!textSurface) {
+            std::cerr << "Error creating text surface: " << TTF_GetError() << std::endl;
+        } else {
+            textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+            if(!textTexture) {
+                std::cerr << "Error creating text texture: " << TTF_GetError() << std::endl;
+            }
+
+            SDL_FreeSurface(textSurface);
+        }
+    } else {
+        std::cerr << "Font " << fontName << " not found." << std::endl;
+    }
+
+    return textTexture;
+}

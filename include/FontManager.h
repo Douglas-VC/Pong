@@ -6,14 +6,15 @@
 #include <string>
 
 class FontManager {
-private:
+public:
+    SDL_Renderer *renderer;
     std::unordered_map<std::string, TTF_Font*> fonts;
 
-public:
     FontManager();
     ~FontManager();
 
     void loadFont(const std::string& fontName, const std::string& filePath, int fontSize);
+    SDL_Texture* getTextTexture(const std::string& fontName, const std::string& text, SDL_Color color);
 };
 
 #endif //PONG_FONTMANAGER_H

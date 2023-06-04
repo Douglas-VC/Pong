@@ -11,6 +11,7 @@
 #include "../include/components/Player.h"
 #include "../include/components/AI.h"
 #include "../include/components/Ball.h"
+#include "../include/components/Score.h"
 
 Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) : running{}, window{} {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -37,6 +38,12 @@ Game::~Game() {
 void Game::init() {
     running = true;
 
+    backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
+    backgroundRect = {window.width / 2 - 8, 0, 16, 768};
+
+    fontManager.renderer = window.getRenderer();
+    fontManager.loadFont("arial128", "../assets/arial.ttf" ,128);
+
     auto playerPaddle = registry.create();
     auto aiPaddle = registry.create();
     auto ball = registry.create();
@@ -45,11 +52,13 @@ void Game::init() {
     registry.emplace<Sprite>(playerPaddle, window.getRenderer(), "../assets/paddle.png");
     registry.emplace<Player>(playerPaddle);
     registry.emplace<Collider>(playerPaddle, "playerPaddle");
+    registry.emplace<Score>(playerPaddle, &fontManager, "arial128", 350, 50, 255, 255, 255, 0);
 
     registry.emplace<Transform>(aiPaddle, 50, window.height / 2 - 50, 5.0);
     registry.emplace<Sprite>(aiPaddle, window.getRenderer(), "../assets/paddle.png");
     registry.emplace<AI>(aiPaddle);
     registry.emplace<Collider>(aiPaddle, "aiPaddle");
+    registry.emplace<Score>(aiPaddle, &fontManager, "arial128", 600, 50, 255, 255, 255, 0);
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
     registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
@@ -63,11 +72,6 @@ void Game::init() {
     collisionHolder.ai = aiPaddle;
     collisionHolder.ball = ball;
     collisionHolder.registry = &registry;
-
-    backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
-    backgroundRect = {window.width / 2 - 8, 0, 16, 768};
-
-    fontManager.loadFont("arial28", "../assets/arial.ttf" ,28);
 
     gameLoop();
 }
@@ -124,7 +128,7 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    movementSystem.update(window, registry);
+    movementSystem.update(&fontManager, window, registry);
     collisionSystem.update(collisionHolder);
     aiSystem.update(window, registry);
 }
