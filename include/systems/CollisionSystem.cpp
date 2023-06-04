@@ -1,12 +1,12 @@
 #include <iostream>
-#include "ColliderSystem.h"
+#include "CollisionSystem.h"
 #include "../components/Transform.h"
 #include "../components/Sprite.h"
 #include "../components/Collider.h"
 #include "../components/Player.h"
 #include "../components/Ball.h"
 
-void ColliderSystem::update(CollisionHolder &collisionHolder) {
+void CollisionSystem::update(CollisionHolder &collisionHolder) {
     auto &ballVel = collisionHolder.registry->get<Ball>(collisionHolder.ball);
 
     if (ballVel.immunityTicks > 0) {

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <chrono>
 
 #include "../include/Game.h"
@@ -25,12 +24,6 @@ Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fu
         return;
     }
     std::cout << "SDL Image library loaded!" << std::endl;
-
-    if (TTF_Init() == -1) {
-        std::cerr << "ERROR: Unable to initialize TTF library: " << SDL_GetError() << std::endl;
-        return;
-    }
-    std::cout << "SDL TTF library loaded!" << std::endl;
 
     window.create(title, xPos, yPos, width, height, fullScreen);
 };
@@ -73,6 +66,8 @@ void Game::init() {
 
     backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
     backgroundRect = {window.width / 2 - 8, 0, 16, 768};
+
+    fontManager.loadFont("arial28", "../assets/arial.ttf" ,28);
 
     gameLoop();
 }

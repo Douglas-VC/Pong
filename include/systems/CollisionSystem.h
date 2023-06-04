@@ -1,12 +1,12 @@
-#ifndef PONG_COLLIDERSYSTEM_H
-#define PONG_COLLIDERSYSTEM_H
+#ifndef PONG_COLLISIONSYSTEM_H
+#define PONG_COLLISIONSYSTEM_H
 
 #include "../../entt/entt.hpp"
 
-class ColliderSystem {
+class CollisionSystem {
 public:
-    ColliderSystem() = default;
-    ~ColliderSystem() = default;
+    CollisionSystem() = default;
+    ~CollisionSystem() = default;
 
     struct CollisionHolder {
         entt::entity player;
@@ -16,8 +16,7 @@ public:
         entt::registry* registry;
     };
 
-
     void update(CollisionHolder &collisionHolder);
 };
 
-#endif //PONG_COLLIDERSYSTEM_H
+#endif //PONG_COLLISIONSYSTEM_H

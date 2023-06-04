@@ -3,9 +3,9 @@
 
 struct Player {
     enum class MoveDirection : short {
+        STOPPED,
         UP,
-        DOWN,
-        STOPPED
+        DOWN
     };
     MoveDirection moveDirection = MoveDirection::STOPPED;
 };

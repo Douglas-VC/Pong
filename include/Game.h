@@ -6,8 +6,10 @@
 
 #include "systems/RenderSystem.h"
 #include "systems/MovementSystem.h"
-#include "systems/ColliderSystem.h"
+#include "systems/CollisionSystem.h"
 #include "systems/AISystem.h"
+
+#include "FontManager.h"
 
 class Game {
 private:
@@ -18,10 +20,12 @@ private:
 
     RenderSystem renderSystem;
     MovementSystem movementSystem;
-    ColliderSystem collisionSystem;
+    CollisionSystem collisionSystem;
     AISystem aiSystem;
 
-    ColliderSystem::CollisionHolder collisionHolder;
+    CollisionSystem::CollisionHolder collisionHolder;
+
+    FontManager fontManager;
 
     SDL_Texture *backgroundTexture;
     SDL_Rect backgroundRect;
