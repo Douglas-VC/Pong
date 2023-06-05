@@ -2,6 +2,7 @@
 #define PONG_COLLISIONSYSTEM_H
 
 #include "../../entt/entt.hpp"
+#include "../SoundManager.h"
 
 class CollisionSystem {
 public:
@@ -16,7 +17,7 @@ public:
         entt::registry* registry;
     };
 
-    void update(CollisionHolder &collisionHolder);
+    void update(SoundManager *soundManager, CollisionHolder &collisionHolder);
 };
 
 #endif //PONG_COLLISIONSYSTEM_H

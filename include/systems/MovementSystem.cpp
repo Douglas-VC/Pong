@@ -41,7 +41,7 @@ float randDir(const float vel) {
     }
 }
 
-void MovementSystem::update(FontManager *fontManager, Window &window, entt::registry& registry) {
+void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager, Window &window, entt::registry& registry) {
     auto playerView = registry.view<Player, Transform, Sprite>();
     for(auto entity: playerView) {
         auto &player = playerView.get<Player>(entity);
@@ -85,6 +85,7 @@ void MovementSystem::update(FontManager *fontManager, Window &window, entt::regi
                 SDL_DestroyTexture(aiScore.textTexture);
                 aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
             }
+            soundManager->playSound("score");
         } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
@@ -96,14 +97,17 @@ void MovementSystem::update(FontManager *fontManager, Window &window, entt::regi
                 SDL_DestroyTexture(playerScore.textTexture);
                 playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
             }
+            soundManager->playSound("score");
         }
 
         if (transform.position.y < 0.0) {
             transform.position.y = 0.0;
             ball.velY *= -1;
+            soundManager->playSound("wallCollision");
         } else if (transform.position.y > static_cast<float>(window.height - sprite.height)) {
             transform.position.y = static_cast<float>(window.height - sprite.height);
             ball.velY *= -1;
+            soundManager->playSound("wallCollision");
         }
     }
 }

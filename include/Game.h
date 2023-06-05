@@ -10,6 +10,7 @@
 #include "systems/AISystem.h"
 
 #include "FontManager.h"
+#include "SoundManager.h"
 
 class Game {
 private:
@@ -26,6 +27,7 @@ private:
     CollisionSystem::CollisionHolder collisionHolder;
 
     FontManager fontManager;
+    SoundManager soundManager;
 
     SDL_Texture *backgroundTexture;
     SDL_Rect backgroundRect;

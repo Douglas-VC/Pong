@@ -42,6 +42,10 @@ void Game::init() {
     fontManager.renderer = window.getRenderer();
     fontManager.loadFont("arial128", "../assets/arial.ttf" ,128);
 
+    soundManager.loadSound("../assets/paddleCollision.wav", "paddleCollision");
+    soundManager.loadSound("../assets/wallCollision.wav", "wallCollision");
+    soundManager.loadSound("../assets/score.wav", "score");
+
     auto playerPaddle = registry.create();
     auto aiPaddle = registry.create();
     auto ball = registry.create();
@@ -127,8 +131,8 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    movementSystem.update(&fontManager, window, registry);
-    collisionSystem.update(collisionHolder);
+    movementSystem.update(&soundManager, &fontManager, window, registry);
+    collisionSystem.update(&soundManager, collisionHolder);
     aiSystem.update(window, registry);
 }
 

@@ -6,7 +6,7 @@
 #include "../components/Player.h"
 #include "../components/Ball.h"
 
-void CollisionSystem::update(CollisionHolder &collisionHolder) {
+void CollisionSystem::update(SoundManager *soundManager, CollisionHolder &collisionHolder) {
     auto &ballVel = collisionHolder.registry->get<Ball>(collisionHolder.ball);
 
     if (ballVel.immunityTicks > 0) {
@@ -32,10 +32,12 @@ void CollisionSystem::update(CollisionHolder &collisionHolder) {
         ballVel.velY = diff;
         ballVel.velX *= -1;
         ballVel.immunityTicks = 5;
+        soundManager->playSound("paddleCollision");
     } else if (SDL_HasIntersection(&ai.collider, &ball.collider) == SDL_TRUE) {
         float diff = ((ball.collider.y + ball.collider.h / 2.0) - (ai.collider.y + ai.collider.h / 2.0)) * ballVel.maxVel / (player.collider.h / 2.0);
         ballVel.velY = diff;
         ballVel.velX *= -1;
         ballVel.immunityTicks = 5;
+        soundManager->playSound("paddleCollision");
     }
 }
