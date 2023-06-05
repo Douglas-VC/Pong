@@ -41,7 +41,7 @@ float randDir(const float vel) {
     }
 }
 
-void MovementSystem::update(FontManager *fontManager,Window &window, entt::registry& registry) {
+void MovementSystem::update(FontManager *fontManager, Window &window, entt::registry& registry) {
     auto playerView = registry.view<Player, Transform, Sprite>();
     for(auto entity: playerView) {
         auto &player = playerView.get<Player>(entity);
@@ -82,6 +82,7 @@ void MovementSystem::update(FontManager *fontManager,Window &window, entt::regis
             for(auto scoreEntity: aiScoreView) {
                 auto &aiScore = aiScoreView.get<Score>(scoreEntity);
                 aiScore.score++;
+                SDL_DestroyTexture(aiScore.textTexture);
                 aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
             }
         } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
@@ -92,6 +93,7 @@ void MovementSystem::update(FontManager *fontManager,Window &window, entt::regis
             for(auto scoreEntity: playerScoreView) {
                 auto &playerScore = playerScoreView.get<Score>(scoreEntity);
                 playerScore.score++;
+                SDL_DestroyTexture(playerScore.textTexture);
                 playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
             }
         }
