@@ -14,7 +14,7 @@ public:
     MovementSystem() = default;
     ~MovementSystem() = default;
 
-    Player::MoveDirection playerMovement;
+    Player::MoveDirection playerMovement = Player::MoveDirection::STOPPED;
 
     void onKeyDown(const KeyDown& key_down) noexcept;
     void onKeyUp(const KeyUp& key_up) noexcept;

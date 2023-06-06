@@ -30,13 +30,13 @@ void CollisionSystem::update(SoundManager *soundManager, CollisionHolder &collis
     if (SDL_HasIntersection(&player.collider, &ball.collider) == SDL_TRUE) {
         float diff = ((ball.collider.y + ball.collider.h / 2.0f) - (player.collider.y + player.collider.h / 2.0f)) * ballVel.maxVel / (player.collider.h / 2.0);
         ballVel.velY = diff;
-        ballVel.velX *= -1;
+        ballVel.velX = -15.0f;
         ballVel.immunityTicks = 5;
         soundManager->playSound("paddleCollision");
     } else if (SDL_HasIntersection(&ai.collider, &ball.collider) == SDL_TRUE) {
         float diff = ((ball.collider.y + ball.collider.h / 2.0) - (ai.collider.y + ai.collider.h / 2.0)) * ballVel.maxVel / (player.collider.h / 2.0);
         ballVel.velY = diff;
-        ballVel.velX *= -1;
+        ballVel.velX = 15.0f;
         ballVel.immunityTicks = 5;
         soundManager->playSound("paddleCollision");
     }

@@ -77,7 +77,7 @@ void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager
         if (transform.position.x < 0.0) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
-            ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velX = 6.0f;
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
             for(auto scoreEntity: aiScoreView) {
                 auto &aiScore = aiScoreView.get<Score>(scoreEntity);
@@ -89,7 +89,7 @@ void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager
         } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
-            ball.velX = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velX = 6.0f;
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
             for(auto scoreEntity: playerScoreView) {
                 auto &playerScore = playerScoreView.get<Score>(scoreEntity);

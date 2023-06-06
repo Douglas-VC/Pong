@@ -13,7 +13,14 @@ void AISystem::update(Window &window, entt::registry& registry) {
         for(auto entity2: ballView) {
             auto &ballTransform = aiView.get<Transform>(entity2);
             auto &ballSprite = aiView.get<Sprite>(entity2);
-            aiTransform.position.y = (ballTransform.position.y + ballSprite.height / 2.0f) - (aiSprite.height / 2.0f);
+//            aiTransform.position.y = (ballTransform.position.y + ballSprite.height / 2.0f) - (aiSprite.height / 2.0f);
+
+            double distDiff = (aiTransform.position.y + aiSprite.height / 2.0f) - (ballTransform.position.y + ballSprite.height / 2.0f);
+            if (distDiff < -10.0) {
+                aiTransform.position.y += 6.0;
+            } else if (distDiff > 10.0){
+                aiTransform.position.y -= 6.0;
+            }
 
             if (aiTransform.position.y < 0.0) {
                 aiTransform.position.y = 0.0;
