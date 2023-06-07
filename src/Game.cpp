@@ -8,12 +8,12 @@
 #include "../include/components/Transform.h"
 #include "../include/components/Sprite.h"
 #include "../include/components/Collider.h"
-#include "../include/components/Player.h"
 #include "../include/components/AI.h"
 #include "../include/components/Ball.h"
 #include "../include/components/Score.h"
 
-Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) : running{}, window{} {
+Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen) :
+            running{}, window{}, backgroundRect{} {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         std::cerr << "ERROR: Unable to initialize SDL: " << SDL_GetError() << std::endl;
         return;
@@ -27,25 +27,29 @@ Game::Game(const char* title, int xPos, int yPos, int width, int height, bool fu
     std::cout << "SDL Image library loaded!" << std::endl;
 
     window.create(title, xPos, yPos, width, height, fullScreen);
-};
+
+    backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
+    backgroundRect = {window.width / 2 - 8, 0, 16, 768};
+
+    fontManager.renderer = window.getRenderer();
+    fontManager.loadFont("arial128", "../assets/arial.ttf" ,128);
+    fontManager.loadFont("arial32", "../assets/arial.ttf" ,32);
+
+    soundManager.loadSound("../assets/paddleCollision.wav", "paddleCollision");
+    soundManager.loadSound("../assets/wallCollision.wav", "wallCollision");
+    soundManager.loadSound("../assets/score.wav", "score");
+
+    running = true;
+}
 
 Game::~Game() {
+    SDL_DestroyTexture(backgroundTexture);
     IMG_Quit();
     SDL_Quit();
     std::cout << "Game cleaned!" << std::endl;
 }
 
 void Game::init() {
-    backgroundTexture = TextureManager::LoadTexture(window.getRenderer(), "../assets/background.png");
-    backgroundRect = {window.width / 2 - 8, 0, 16, 768};
-
-    fontManager.renderer = window.getRenderer();
-    fontManager.loadFont("arial128", "../assets/arial.ttf" ,128);
-
-    soundManager.loadSound("../assets/paddleCollision.wav", "paddleCollision");
-    soundManager.loadSound("../assets/wallCollision.wav", "wallCollision");
-    soundManager.loadSound("../assets/score.wav", "score");
-
     auto playerPaddle = registry.create();
     auto aiPaddle = registry.create();
     auto ball = registry.create();
@@ -54,17 +58,17 @@ void Game::init() {
     registry.emplace<Sprite>(playerPaddle, window.getRenderer(), "../assets/paddle.png");
     registry.emplace<Player>(playerPaddle);
     registry.emplace<Collider>(playerPaddle, "playerPaddle");
-    registry.emplace<Score>(playerPaddle, &fontManager, "arial128", 350, 50, 255, 255, 255, 0);
+    registry.emplace<Score>(playerPaddle, &fontManager, "arial128", 600, 50, 255, 255, 255, 0);
 
     registry.emplace<Transform>(aiPaddle, 50, window.height / 2 - 50, 5.0);
     registry.emplace<Sprite>(aiPaddle, window.getRenderer(), "../assets/paddle.png");
     registry.emplace<AI>(aiPaddle);
     registry.emplace<Collider>(aiPaddle, "aiPaddle");
-    registry.emplace<Score>(aiPaddle, &fontManager, "arial128", 600, 50, 255, 255, 255, 0);
+    registry.emplace<Score>(aiPaddle, &fontManager, "arial128", 350, 50, 255, 255, 255, 0);
 
     registry.emplace<Transform>(ball, window.width / 2 - 8, window.height / 2 - 8, -1.0, 0.0, 5.0);
     registry.emplace<Sprite>(ball, window.getRenderer(), "../assets/ball.png");
-    registry.emplace<Ball>(ball, 6.0, 1.0, 1.0, 5.0);
+    registry.emplace<Ball>(ball, 6.0, 1.0, 4.0, 8.0);
     registry.emplace<Collider>(ball, "ball");
 
     dispatcher.sink<KeyDown>().connect<&MovementSystem::onKeyDown>(movementSystem);
@@ -75,7 +79,6 @@ void Game::init() {
     collisionHolder.ball = ball;
     collisionHolder.registry = &registry;
 
-    running = true;
     gameLoop();
 }
 
@@ -138,7 +141,9 @@ void Game::update() {
 
 void Game::render() {
     SDL_RenderClear(window.getRenderer());
+
     SDL_RenderCopy(window.getRenderer(), backgroundTexture, {}, &backgroundRect);
     renderSystem.render(window.getRenderer(), registry);
+
     SDL_RenderPresent(window.getRenderer());
 }

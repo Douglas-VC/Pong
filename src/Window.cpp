@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../include/Window.h"
 
-Window::Window() : window{nullptr}, renderer{nullptr}, event{}, height{}, width{} {};
+Window::Window() : window{nullptr}, renderer{nullptr}, event{}, height{}, width{} {}
 
 Window::~Window() {
     SDL_DestroyWindow(window);

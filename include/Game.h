@@ -24,13 +24,13 @@ private:
     CollisionSystem collisionSystem;
     AISystem aiSystem;
 
-    CollisionSystem::CollisionHolder collisionHolder;
+    CollisionSystem::CollisionHolder collisionHolder{};
 
     FontManager fontManager;
     SoundManager soundManager;
 
     SDL_Texture *backgroundTexture;
-    SDL_Rect backgroundRect;
+    SDL_Rect backgroundRect{};
 
 public:
     Game(const char* title, int xPos, int yPos, int width, int height, bool fullScreen);

@@ -8,7 +8,7 @@ struct Ball {
     float maxVel;
     int immunityTicks;
 
-    Ball(float vx, float vy, float minv, float maxv) : velX{vx}, velY{vy}, minVel{minv}, maxVel{maxv}, immunityTicks{} {};
+    Ball(float vx, float vy, float minV, float maxV) : velX{vx}, velY{vy}, minVel{minV}, maxVel{maxV}, immunityTicks{} {};
 };
 
 #endif //PONG_BALL_H

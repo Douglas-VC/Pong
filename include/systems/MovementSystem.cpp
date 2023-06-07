@@ -6,6 +6,7 @@
 #include "../components/Ball.h"
 #include "../components/AI.h"
 #include "../components/Score.h"
+#include "../systems/WinLossScreen.h"
 
 void MovementSystem::onKeyDown(const KeyDown& key_down) noexcept {
     switch (key_down.keyCode) {
@@ -77,27 +78,33 @@ void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager
         if (transform.position.x < 0.0) {
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
-            ball.velX = 6.0f;
+            ball.velX = randDir(6.0f);
             ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
-            for(auto scoreEntity: aiScoreView) {
-                auto &aiScore = aiScoreView.get<Score>(scoreEntity);
-                aiScore.score++;
-                SDL_DestroyTexture(aiScore.textTexture);
-                aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
-            }
             soundManager->playSound("score");
-        } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
-            transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
-            transform.position.y = window.height / 2.0 - sprite.height / 2.0;
-            ball.velX = 6.0f;
-            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
             for(auto scoreEntity: playerScoreView) {
                 auto &playerScore = playerScoreView.get<Score>(scoreEntity);
                 playerScore.score++;
+                if (playerScore.score == 5) {
+                    WinLossScreen::displayEndScreen("Player", fontManager, window, registry);
+                }
                 SDL_DestroyTexture(playerScore.textTexture);
                 playerScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(playerScore.score), playerScore.textColor);
             }
+        } else if (transform.position.x > static_cast<float>(window.width - sprite.width)) {
+            transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
+            transform.position.y = window.height / 2.0 - sprite.height / 2.0;
+            ball.velX = randDir(6.0f);
+            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
             soundManager->playSound("score");
+            for(auto scoreEntity: aiScoreView) {
+                auto &aiScore = aiScoreView.get<Score>(scoreEntity);
+                aiScore.score++;
+                if (aiScore.score == 5) {
+                    WinLossScreen::displayEndScreen("AI", fontManager, window, registry);
+                }
+                SDL_DestroyTexture(aiScore.textTexture);
+                aiScore.textTexture = fontManager->getTextTexture("arial128", std::to_string(aiScore.score), aiScore.textColor);
+            }
         }
 
         if (transform.position.y < 0.0) {
