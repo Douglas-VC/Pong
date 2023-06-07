@@ -79,7 +79,7 @@ void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
             ball.velX = randDir(6.0f);
-            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velY = randDir(ball.minVel / 2);
             soundManager->playSound("score");
             for(auto scoreEntity: playerScoreView) {
                 auto &playerScore = playerScoreView.get<Score>(scoreEntity);
@@ -94,7 +94,7 @@ void MovementSystem::update(SoundManager *soundManager, FontManager *fontManager
             transform.position.x  = window.width / 2.0 - sprite.width / 2.0;
             transform.position.y = window.height / 2.0 - sprite.height / 2.0;
             ball.velX = randDir(6.0f);
-            ball.velY = randDir(randomFloat(ball.minVel, ball.maxVel));
+            ball.velY = randDir(ball.minVel / 2);
             soundManager->playSound("score");
             for(auto scoreEntity: aiScoreView) {
                 auto &aiScore = aiScoreView.get<Score>(scoreEntity);
